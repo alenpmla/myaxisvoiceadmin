@@ -5,20 +5,36 @@ package codme.myaxisvoiceadmin;
  */
 public class UserClass {
 
-    String address,display_name,email,img_url,phone_number,scroll_message;
+    String address,display_name,email,img_url,phone_number,scroll_message,uid,rateurl,myofferurl;
 
+    public String getUid() {
+        return uid;
+    }
+
+    public UserClass(String address, String rateurl, String myofferurl, String uid, String scroll_message, String phone_number, String img_url, String email, String display_name) {
+        this.address = address;
+        this.rateurl = rateurl;
+        this.myofferurl = myofferurl;
+        this.uid = uid;
+        this.scroll_message = scroll_message;
+        this.phone_number = phone_number;
+        this.img_url = img_url;
+        this.email = email;
+        this.display_name = display_name;
+    }
+
+    public String getRateurl() {
+        return rateurl;
+    }
+
+    public String getMyofferurl() {
+        return myofferurl;
+    }
 
     public UserClass() {
     }
 
-    public UserClass(String email, String address, String display_name, String img_url, String phone_number, String scroll_message) {
-        this.email = email;
-        this.address = address;
-        this.display_name = display_name;
-        this.img_url = img_url;
-        this.phone_number = phone_number;
-        this.scroll_message = scroll_message;
-    }
+
 
     public String getAddress() {
         return address;

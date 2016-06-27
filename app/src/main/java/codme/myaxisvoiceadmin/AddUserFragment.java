@@ -1,9 +1,14 @@
 package codme.myaxisvoiceadmin;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -13,16 +18,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +48,10 @@ import java.util.Map;
 public class AddUserFragment extends Fragment {
     private FirebaseAuth mAuth;
     EditText address,phonenumber,email,name,password,confirmpass;
+
+    final int SELECT_PHOTO=202;
+
+    Bitmap imgtouploadbm;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,6 +64,8 @@ public class AddUserFragment extends Fragment {
          name=(EditText)rootView.findViewById(R.id.name);
          password=(EditText)rootView.findViewById(R.id.password);
          confirmpass=(EditText)rootView.findViewById(R.id.confirmpass);
+
+
 
 
 
@@ -67,9 +89,21 @@ public class AddUserFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.adduser) {
-
             createuser(email.getText().toString(),password.getText().toString(),name.getText().toString(),phonenumber.getText().toString(),
                     address.getText().toString());
+
+
+
+
+            return true;
+        }
+        else if(id==R.id.back){
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            HomeFragment homeFragment = new HomeFragment();
+            fragmentTransaction.replace(R.id.container, homeFragment);
+            fragmentTransaction.commit();
 
 
 
@@ -88,57 +122,59 @@ public class AddUserFragment extends Fragment {
 
 
 
+try{
+    mAuth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    Log.d("signupactivity", "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("signupactivity", "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(getActivity(), "Failed to create user",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            Toast.makeText(getActivity(), "User Created",
-                                    Toast.LENGTH_SHORT).show();
-
-
-
-
-                            final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference myRef = database.getReference("users");
-
-                            Map<String,Object> map=new HashMap<String, Object>();
-                            map.put("address",addresssr);
-                            map.put("display_name",namesr);
-                            map.put("email",emailsr);
-                            map.put("img_url","img_url");
-                            map.put("phone_number",phonenumbersr);
-                            map.put("scroll_message","scroll_message");
-
-                            myRef.child( task.getResult().getUser().getUid()).updateChildren(map);
-                            FragmentManager fragmentManager = getFragmentManager();
-                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                            HomeFragment homeFragment = new HomeFragment();
-                            fragmentTransaction.replace(R.id.container, homeFragment);
-                            fragmentTransaction.commit();
-
-
-
-
-
-
-
-
-                        }
-
-                        // ...
+                    // If sign in fails, display a message to the user. If sign in succeeds
+                    // the auth state listener will be notified and logic to handle the
+                    // signed in user can be handled in the listener.
+                    if (!task.isSuccessful()) {
+                        Toast.makeText(getActivity(), "Failed to create user",
+                                Toast.LENGTH_SHORT).show();
                     }
-                });
+                    else {
+                        Toast.makeText(getActivity(), "User Created",
+                                Toast.LENGTH_SHORT).show();
+
+
+
+
+                        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference myRef = database.getReference("users");
+
+                        Map<String,Object> map=new HashMap<String, Object>();
+                        map.put("address",addresssr);
+                        map.put("display_name",namesr);
+                        map.put("email",emailsr);
+                        map.put("img_url","img");
+                        map.put("phone_number",phonenumbersr);
+                        map.put("scroll_message","scroll_message");
+                        map.put("uid",task.getResult().getUser().getUid());
+
+                        myRef.child( task.getResult().getUser().getUid()).updateChildren(map);
+
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                        HomeFragment homeFragment = new HomeFragment();
+                        fragmentTransaction.replace(R.id.container, homeFragment);
+                        fragmentTransaction.commit();
+                    }
+
+                    // ...
+                }
+            });
+}catch (Exception e){
+    e.printStackTrace();
+}
+
     }
+
+
+
+
 }

@@ -54,13 +54,6 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.container,homefrag);
         fragmentTransaction.commit();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-createuser("alen3433@gmail.com","alenalen","alen 3433","123454464");
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -126,12 +119,6 @@ createuser("alen3433@gmail.com","alenalen","alen 3433","123454464");
 
 
 
-
-
-
-
-
-
                         }
 
                         // ...
@@ -158,6 +145,12 @@ createuser("alen3433@gmail.com","alenalen","alen 3433","123454464");
 
         if (id == R.id.nav_home) {
             // Handle the camera action
+
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            HomeFragment addUserFragment = new HomeFragment();
+            fragmentTransaction.replace(R.id.container, addUserFragment);
+            fragmentTransaction.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

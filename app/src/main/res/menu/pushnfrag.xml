@@ -2,15 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:icon="@drawable/ic_done_white_24dp"
-        android:id="@+id/adduser"
-        android:orderInCategory="100"
-        android:title="Add"
-        app:showAsAction="always" />
-    <item
         android:icon="@drawable/ic_navigate_before_white_24dp"
-        android:id="@+id/back"
+        android:id="@+id/backpush"
         android:orderInCategory="100"
         android:title="Back"
         app:showAsAction="always" />
+
+
 </menu>

@@ -2,6 +2,7 @@ package codme.myaxisvoiceadmin;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,7 +31,7 @@ public class HomeFragment extends android.app.Fragment {
     private FirebaseAuth mAuth;
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootview=inflater.inflate(R.layout.fragment_home,container,false);
         Firebase.setAndroidContext(getActivity());
         mAuth = FirebaseAuth.getInstance();
@@ -65,6 +67,22 @@ public class HomeFragment extends android.app.Fragment {
         };
         userslist.setAdapter(mAdapter);
 
+
+        userslist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+
+             Firebase firebase= mAdapter.getRef(position);
+
+                System.out.println("key is"+firebase.getKey());
+                Intent intent=new Intent(getActivity(),EditUserDataActivity.class);
+                intent.putExtra("uid",firebase.getKey());
+                startActivity(intent);
+
+            }
+        });
+
         return rootview;
     }
     @Override
@@ -92,6 +110,21 @@ public class HomeFragment extends android.app.Fragment {
             fragmentTransaction.replace(R.id.container, addUserFragment);
 
             fragmentTransaction.commit();
+
+            return true;
+        }
+        else  if(id == R.id.sendmsg)
+        {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            PushNotificationFragment pushNotificationFragment = new PushNotificationFragment();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.container, pushNotificationFragment);
+
+            fragmentTransaction.commit();
+
+
 
             return true;
         }
